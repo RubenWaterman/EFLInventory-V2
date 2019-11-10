@@ -10,6 +10,9 @@ use App\SalesHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Response;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 class CartController extends Controller {
 
@@ -235,6 +238,94 @@ class CartController extends Controller {
         }
 
         $app_settings = \DB::table("app_config")->get()->first();
+
+        function divideFloat($a, $b, $precision=2) {
+            $a*=pow(10, $precision);
+            $result=(int)($a / $b);
+            if (strlen($result)==$precision) return '0.' . $result;
+            else return preg_replace('/(\d{' . $precision . '})$/', '.\1', $result);
+        }
+
+        $data_array =  array(
+                "euro" => divideFloat($sales_group['change_amount'],100)
+        );
+        
+        $make_call = callAPI('POST', 'http://192.168.1.203:5000/lnurl', json_encode($data_array));
+        $response = json_decode($make_call, true);
+        $lnurl    = $response['lnurl'];
+        $satoshi  = $response['satoshis'];
+
+        /* Information for the receipt */
+        $subtotal = new item('Subtotal', divideFloat($sales_group['total_amount'],100));
+        $tendered = new item('Amount Paid', divideFloat($sales_group['amount_tendered'],100));
+        $change = new item('Change', divideFloat($sales_group['change_amount'],100));
+        $satoshis = new item('Change (in satoshis)', $satoshi);
+        $total = new item('Total', divideFloat($sales_group['total_amount'],100), true);
+        /* Date is kept the same for testing */
+        // $date = date('l jS \of F Y h:i:s A');
+        $date = "Monday 6th of April 2015 02:56:25 PM";
+
+        require_once("phpqrcode/qrlib.php");
+
+        \QRcode::png($lnurl, "test.png", 'L', 5, 0);
+
+        $img = EscposImage::load("test.png");
+
+
+        $connector = new FilePrintConnector("/dev/usb/lp0");
+
+        $printer = new Printer($connector);
+        
+        /* Name of shop */
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer -> text("The Block Lisboa\n");
+        $printer -> selectPrintMode();
+        $printer -> text("R. Latino Coelho 63 1er Andar, 1050-133 Lisboa\n");
+        $printer -> feed();
+
+        /* Title of receipt */
+        $printer -> setEmphasis(true);
+        $printer -> text("SALES INVOICE\n");
+        $printer -> setEmphasis(false);
+
+        /* Items */
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
+        $printer -> setEmphasis(true);
+        $printer -> text(new item('', 'EUR'));
+        $printer -> setEmphasis(false);
+        foreach ($items as $item) {
+            $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
+        }
+                
+        $printer -> setEmphasis(true);
+        $printer -> text($subtotal);
+        $printer -> setEmphasis(false);
+        $printer -> feed();
+
+        /* Tax and total */
+        $printer -> text($tendered);
+        $printer -> text($change);
+        $printer -> text($satoshis);
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer -> text($total);
+        $printer -> selectPrintMode();
+        
+        /* Footer */
+        $printer -> feed(2);
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
+
+        /* Print LNURL */
+        $printer -> bitImage($img);
+        $printer -> feed();
+        $printer -> text("Claim your change as satoshis via lnurl\n");
+
+        $printer -> text("Thank you for shopping at ExampleMart\n");
+        $printer -> text("For trading hours, please visit example.com\n");
+        $printer -> feed(2);
+        /* Cut the receipt and open the cash drawer */
+        $printer -> cut();
+
+        $printer -> close();
 
         // return receipt number and app settings
         return Response::json([
