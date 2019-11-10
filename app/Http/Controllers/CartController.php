@@ -494,8 +494,10 @@ class CartController extends Controller {
         $printer -> text($tendered);
         $printer -> text($change);
 
+        $printer -> feed(2);
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
         $printer -> text("THANK YOU FOR BUYING FROM US\n");
-        $printer -> text("Returns are only accepted within 24 working hours from the time of purchase, on show of this receipt, and given the item is in an acceptable good condition.\n");
+        $printer -> text("Returns are only accepted within 24 hours\nfrom the time of purchase, on show of this\nreceipt, and given the item is in\nan acceptable good condition.\n");
         $printer -> feed(2);
         /* Cut the receipt and open the cash drawer */
         $printer -> cut();
