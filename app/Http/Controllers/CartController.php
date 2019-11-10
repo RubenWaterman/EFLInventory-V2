@@ -484,7 +484,10 @@ class CartController extends Controller {
             $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
         }
         
+        $printer -> feed();
+        $printer -> setEmphasis(true);
         $printer -> text($total);
+        $printer -> setEmphasis(false);
         $printer -> feed();
 
         /* Change part */
