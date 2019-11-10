@@ -425,6 +425,7 @@ class item
 
         if ($this -> name == 'Total') {
             $left = str_pad($this -> name, $leftCols);
+            $right = str_pad($sign . $this -> price, $rightCols, ' ', STR_PAD_LEFT);
         } elseif ($this -> quantity > 0) {
             $left = str_pad($this -> quantity . ' x ' . $this -> name, $leftCols);
         } else {
