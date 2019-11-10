@@ -275,20 +275,12 @@ class CartController extends Controller {
         $img = EscposImage::load("test.png");
         $logo = EscposImage::load(__DIR__.'/../../../public/img/blocklogo.png', false);
 
-
         $connector = new FilePrintConnector("/dev/usb/lp0");
-        $profile = CapabilityProfile::load("POS-5890");
 
-        $printer = new Printer($connector, $profile);
-
-        /* Print top logo */
-        if ($profile->getSupportsGraphics()) {
-            $printer->graphics($logo);
-        }
-        if ($profile->getSupportsBitImageRaster() && !$profile->getSupportsGraphics()) {
-            $printer->bitImage($logo);
-        }
+        $printer = new Printer($connector);
         
+        $printer -> bitImage($logo);
+
         /* Name of shop */
         $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
         $printer -> text("The Block Lisboa\n");
