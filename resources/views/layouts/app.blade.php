@@ -150,7 +150,7 @@
                             <div class="d-flex m-r-20 m-l-10 hidden-md-down">
                                 <div class="chart-text m-r-10">
                                     <h6 class="m-b-0"><small>TOTAL SALES FOR THIS MONTH</small></h6>
-                                    <h4 class="m-t-0 text-info"><span style="text-decoration: line-through">N</span><span class="lblMonthSales"></span></h4></div>
+                                    <h4 class="m-t-0 text-info"><span>€</span><span class="lblMonthSales"></span></h4></div>
                                 <div class="spark-chart">
                                     <div id="monthChart"></div>
                                 </div>
@@ -158,7 +158,7 @@
                             <div class="d-flex m-r-20 m-l-10 hidden-md-down">
                                 <div class="chart-text m-r-10">
                                     <h6 class="m-b-0"><small>TOTAL SALES FOR LAST MONTH</small></h6>
-                                    <h4 class="m-t-0 text-primary"><span style="text-decoration: line-through">N</span><span class="lblLastMonthSales"></span></h4></div>
+                                    <h4 class="m-t-0 text-primary"><span>€</span><span class="lblLastMonthSales"></span></h4></div>
                                 <div class="spark-chart">
                                     <div id="lastMonthChart"></div>
                                 </div>

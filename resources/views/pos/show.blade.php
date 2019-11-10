@@ -87,8 +87,8 @@
                                             <th class="text-center">#</th>
                                             <th>Product</th>
                                             <th class="text-right">Quantity</th>
-                                            <th class="text-right">Unit Cost (<span class="naira">N</span>)</th>
-                                            <th class="text-right">Total (<span class="naira">N</span>)</th>
+                                            <th class="text-right">Unit Cost (<span>€</span>)</th>
+                                            <th class="text-right">Total (<span>€</span>)</th>
                                         </tr>
                                         </thead>
 
@@ -100,10 +100,10 @@
                             <div class="col-md-12">
                                 <div class="pull-right text-right">
                                     <hr>
-                                    <h3 class="pl-4 mb-2"><strong>Total:&nbsp;</strong><span class="naira">N</span><span id="sell-total"></span></h3>
-                                    <h6 class="pl-4"><strong>Amount Paid:&nbsp;</strong><span class="naira">N</span><span id="amount-paid"></span></h6>
-                                    <h6 class="pl-4"><strong>Remaining Balance:&nbsp;</strong><span class="naira">N</span><span id="paid-balance"></span></h6>
-                                    <h6 class="pl-4"><strong>Change:&nbsp;</strong><span class="naira">N</span><span id="paid-change"></span></h6>
+                                    <h3 class="pl-4 mb-2"><strong>Total:&nbsp;</strong><span>€</span><span id="sell-total"></span></h3>
+                                    <h6 class="pl-4"><strong>Amount Paid:&nbsp;</strong><span>€</span><span id="amount-paid"></span></h6>
+                                    <h6 class="pl-4"><strong>Remaining Balance:&nbsp;</strong><span>€</span><span id="paid-balance"></span></h6>
+                                    <h6 class="pl-4"><strong>Change:&nbsp;</strong><span>€</span><span id="paid-change"></span></h6>
                                     <hr>
                                 </div>
                                 <div class="clearfix"></div>
@@ -161,7 +161,7 @@
                     <div class="payment-input-scroll d-block">
                         <div class="cart-total py-3">
                             <h5 class="px-5 mb-2">Total Amount:</h5>
-                            <h1><span class="naira">N</span><span class="payment-total"></span></h1>
+                            <h1><span>€</span><span class="payment-total"></span></h1>
                         </div>
 
                         <div class="input-boxes my-5">
@@ -172,7 +172,7 @@
                                         <div class="form-group">
                                             <label for="txtAmountTendered">Cash Tendered:</label>
                                             <div class="input-group">
-                                                <span class="input-group-addon naira">N</span>
+                                                <span class="input-group-addon">€</span>
                                                 <input type="number" id="txtAmountTendered"
                                                        class="form-control input-lg cash-tendered"
                                                        name="cash_amount_tendered">
@@ -185,7 +185,7 @@
                                         <div class="form-group">
                                             <label for="txtChange">Change:</label>
                                             <div class="input-group">
-                                                <span class="input-group-addon naira">N</span>
+                                                <span class="input-group-addon">€</span>
                                                 <input type="number" id="txtChange"
                                                        class="form-control input-lg cash-change" name="cash_change">
                                                 <span class="input-group-addon">.00</span>
@@ -199,7 +199,7 @@
                                         <div class="form-group">
                                             <label for="txtRemainingAmount">Remaining Amount:</label>
                                             <div class="input-group">
-                                                <span class="input-group-addon naira">N</span>
+                                                <span class="input-group-addon">€</span>
                                                 <input type="number" id="txtRemainingAmount"
                                                        class="form-control input-lg cash-remaining-amount" value="0"
                                                        name="cash_remaining_amount">
@@ -280,10 +280,9 @@
                                                                 <div class='line'>
                                                                     <div class='entry total'>
                                                                         <span class='label pr-2'>Total:</span>
-                                                                        <span class='pr-1'><span
-                                                                                    style="text-decoration: line-through">N</span></span><span
+                                                                        <span class='pr-1'><span>€</span></span><span
                                                                                 class='value'>0.00</span>
-                                                                        {{--<div class='sub-entry'>Taxes: <span style='text-decoration: line-through'>N</span><span class='value'>0.00</span></div>--}}
+                                                                        {{--<div class='sub-entry'>Taxes: <span>€</span><span class='value'>0.00</span></div>--}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -391,7 +390,7 @@
                                                                                  class="img-fluid">
                                                                             <span class="price-tag">
                                                                             <strong>
-                                                                                <span style="text-decoration: line-through">N</span><span class="price">{{ $product->retail_price }}</span>
+                                                                                <span>€</span><span class="price">{{ $product->retail_price }}</span>
                                                                             </strong>
                                                                         </span>
                                                                         </div>
@@ -965,7 +964,7 @@
                     var html = "<div class=\"product\" id=\"p-" + v.batch_id + "\" data-batch-id=\"" + v.batch_id +
                         "\" data-name=\"" + v.variation_name + "\" data-price=\"" + v.retail_price + "\"> <div class=\"product-img\"><img src=" +
                         img_url + " class=\"img-fluid\">";
-                    html += "<span class=\"price-tag\"><strong><span style=\"text-decoration: line-through\">N</span>" +
+                    html += "<span class=\"price-tag\"><strong><span>€</span>" +
                         "<span class=\"price\">" + v.retail_price + "</span></strong></span>";
                     html += "</div><div class=\"product-name\">" + v.variation_name + "</div></div>";
                     $(".product-list").append(html);
@@ -1021,10 +1020,10 @@
                     for (var key in v) {
                         var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + v[key].id + ");' id='" + v[key].id + "' data-id='" + v[key].id + "' data-name='" + v[key].name + "'>";
                         cart_item += "<li class='order-line'><span class='product-name'>" +
-                            v[key].name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+                            v[key].name + "</span><span class='price'><span>€</span><span class='price-value'>"
                             + currencyFormat.format(parseFloat(v[key].quantity) * parseFloat(v[key].price)) + "</span></span><ul class='info-list'><li class='info'>" +
                             "<em>Qty: <span id='prod-quantity'>" + v[key].quantity + "</span></em>" + " at "
-                            + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + v[key].price + "</span>"
+                            + "<span>€</span><span class='price-value'>" + v[key].price + "</span>"
                             + "</li></ul></li></ul>";
 
                         total_price = total_price + (parseFloat(v[key].price) * parseFloat(v[key].quantity));
@@ -1189,10 +1188,10 @@
                 for (var key in v) {
                     var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + v[key].id + ");' id='" + v[key].id + "' data-id='" + v[key].id + "' data-name='" + v[key].name + "'>";
                     cart_item += "<li class='order-line selected'><span class='product-name'>" +
-                            name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+                            name + "</span><span class='price'><span>€</span><span class='price-value'>"
                             + currencyFormat.format(v[key].price) + "</span></span><ul class='info-list'><li class='info'>" +
                             "<em>Qty: <span id='prod-quantity'>" + v[key].quantity + "</span></em>" + " at "
-                            + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + v[key].price + "</span>"
+                            + "<span>€</span><span class='price-value'>" + v[key].price + "</span>"
                             + "</li></ul></li></ul>";
                     console.log(cart_item);
                 }
@@ -1216,10 +1215,10 @@
     function appendToCart(id, name, price, quantity) {
         var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + id + ");' id='" + id + "' data-id='" + id + "' data-name='" + name + "'>";
         cart_item += "<li class='order-line selected'><span class='product-name'>" +
-            name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+            name + "</span><span class='price'><span>€</span><span class='price-value'>"
             + currencyFormat.format(price) + "</span></span><ul class='info-list'><li class='info'>" +
             "<em>Qty: <span id='prod-quantity'>" + quantity + "</span></em>" + " at "
-            + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + price + "</span>"
+            + "<span>€</span><span class='price-value'>" + price + "</span>"
             + "</li></ul></li></ul>";
 
         var total_price = document.getElementsByClassName("summary")[0].firstElementChild.children[0]

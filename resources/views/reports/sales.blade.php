@@ -47,11 +47,11 @@ $page_title = "All Sales Transactions";
                             @foreach($transactions as $transaction)
                                 <tr>
                                     <td>{{ $transaction->products }}</td>
-                                    <td><span class="naira">N</span>{{ number_format($transaction->total_amount, 2) }}</td>
-                                    <td><span class="naira">N</span>{{ number_format($transaction->amount_tendered, 2) }}</td>
+                                    <td><span>€</span>{{ number_format($transaction->total_amount, 2) }}</td>
+                                    <td><span>€</span>{{ number_format($transaction->amount_tendered, 2) }}</td>
                                     <td>{{ $transaction->payment_method }}</td>
-                                    <td><span class="naira">N</span>{{ number_format($transaction->balance_due, 2) }}</td>
-                                    <td><span class="naira">N</span>{{ number_format($transaction->change_amount, 2) }}</td>
+                                    <td><span>€</span>{{ number_format($transaction->balance_due, 2) }}</td>
+                                    <td><span>€</span>{{ number_format($transaction->change_amount, 2) }}</td>
                                     <td>{{ $transaction->seller }}</td>
                                     <td>{{ $transaction->receipt_no }}</td>
                                     <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('D, M j, Y g:i:s A') }}</td>

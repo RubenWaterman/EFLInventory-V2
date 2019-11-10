@@ -231,13 +231,13 @@ $page_title = $title;
                                                 </div>
                                             </dd>
                                             <dt class="col-sm-4 text-right">Total Purchase:</dt>
-                                            <dd class="col-sm-8"><span style="text-decoration: line-through">N</span><span id="purchase-value-{{ $variation->id }}"></span></dd>
+                                            <dd class="col-sm-8"><span>€</span><span id="purchase-value-{{ $variation->id }}"></span></dd>
                                             <dt class="col-sm-4 text-right">Total Sales:</dt>
-                                            <dd class="col-sm-8"><span style="text-decoration: line-through">N</span><span id="sales-value-{{ $variation->id }}"></span></dd>
+                                            <dd class="col-sm-8"><span>€</span><span id="sales-value-{{ $variation->id }}"></span></dd>
                                             <dt class="col-sm-4 text-right">Total Profit:</dt>
-                                            <dd class="col-sm-8"><span style="text-decoration: line-through">N</span><span id="profit-value-{{ $variation->id }}"></span></dd>
+                                            <dd class="col-sm-8"><span>€</span><span id="profit-value-{{ $variation->id }}"></span></dd>
                                             <dt class="col-sm-4 text-right">Total Loss:</dt>
-                                            <dd class="col-sm-8"><span style="text-decoration: line-through">N</span><span id="loss-value-{{ $variation->id }}"></span></dd>
+                                            <dd class="col-sm-8"><span>€</span><span id="loss-value-{{ $variation->id }}"></span></dd>
                                             <dt class="col-sm-4 mt-4 text-right">Damaged Items:</dt>
                                             <dd class="col-sm-8 mt-4"><span id="damaged-value-{{ $variation->id }}"></span></dd>
                                             <dt class="col-sm-4 text-right">Expired Items:</dt>

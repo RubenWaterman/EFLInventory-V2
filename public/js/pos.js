@@ -522,7 +522,7 @@ function searchBarcode() {
                 var html = "<div class=\"product\" id=\"p-" + v.batch_id + "\" data-batch-id=\"" + v.batch_id +
                     "\" data-name=\"" + v.variation_name + "\" data-price=\"" + v.retail_price + "\"> <div class=\"product-img\"><img src=" +
                     img_url + " class=\"img-fluid\">";
-                html += "<span class=\"price-tag\"><strong><span style=\"text-decoration: line-through\">N</span>" +
+                html += "<span class=\"price-tag\"><strong><span>€</span>" +
                     "<span class=\"price\">" + v.retail_price + "</span></strong></span>";
                 html += "</div><div class=\"product-name\">" + v.variation_name + "</div></div>";
                 $(".product-list").append(html);
@@ -578,10 +578,10 @@ function getCartAndDisplay() {
                 for (var key in v) {
                     var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + v[key].id + ");' id='" + v[key].id + "' data-id='" + v[key].id + "' data-name='" + v[key].name + "'>";
                     cart_item += "<li class='order-line'><span class='product-name'>" +
-                        v[key].name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+                        v[key].name + "</span><span class='price'><span>€</span><span class='price-value'>"
                         + currencyFormat.format(parseFloat(v[key].quantity) * parseFloat(v[key].price)) + "</span></span><ul class='info-list'><li class='info'>" +
                         "<em>Qty: <span id='prod-quantity'>" + v[key].quantity + "</span></em>" + " at "
-                        + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + v[key].price + "</span>"
+                        + "<span>€</span><span class='price-value'>" + v[key].price + "</span>"
                         + "</li></ul></li></ul>";
 
                     total_price = total_price + (parseFloat(v[key].price) * parseFloat(v[key].quantity));
@@ -746,10 +746,10 @@ function UpdateProduct(values) {
             for (var key in v) {
                 var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + v[key].id + ");' id='" + v[key].id + "' data-id='" + v[key].id + "' data-name='" + v[key].name + "'>";
                 cart_item += "<li class='order-line selected'><span class='product-name'>" +
-                        name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+                        name + "</span><span class='price'><span>€</span><span class='price-value'>"
                         + currencyFormat.format(v[key].price) + "</span></span><ul class='info-list'><li class='info'>" +
                         "<em>Qty: <span id='prod-quantity'>" + v[key].quantity + "</span></em>" + " at "
-                        + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + v[key].price + "</span>"
+                        + "<span>€</span><span class='price-value'>" + v[key].price + "</span>"
                         + "</li></ul></li></ul>";
                 console.log(cart_item);
             }
@@ -773,10 +773,10 @@ function RemoveProduct(id) {
 function appendToCart(id, name, price, quantity) {
     var cart_item = "<ul class='order-lines' onclick='event.preventDefault(); clickedCartItem(" + id + ");' id='" + id + "' data-id='" + id + "' data-name='" + name + "'>";
     cart_item += "<li class='order-line selected'><span class='product-name'>" +
-        name + "</span><span class='price'><span style='text-decoration: line-through'>N</span><span class='price-value'>"
+        name + "</span><span class='price'><span>€</span><span class='price-value'>"
         + currencyFormat.format(price) + "</span></span><ul class='info-list'><li class='info'>" +
         "<em>Qty: <span id='prod-quantity'>" + quantity + "</span></em>" + " at "
-        + "<span style='text-decoration: line-through'>N</span><span class='price-value'>" + price + "</span>"
+        + "<span>€</span><span class='price-value'>" + price + "</span>"
         + "</li></ul></li></ul>";
 
     var total_price = document.getElementsByClassName("summary")[0].firstElementChild.children[0]

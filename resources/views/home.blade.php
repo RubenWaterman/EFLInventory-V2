@@ -13,7 +13,7 @@
                     <h4 class="card-title">SALES OVERVIEW</h4>
                     <div class="d-flex flex-row">
                         <div class="align-self-center">
-                            <span class="display-6 text-white"><span class="naira">N</span>{{ number_format($today_sales, 2) }}</span>
+                            <span class="display-6 text-white"><span>€</span>{{ number_format($today_sales, 2) }}</span>
                             <h6 style="color: rgba(255,255,255,.6) !important; font-size:11px;">
                                 @if(floatval($sales_increase) < 0)<i class="mdi mdi-arrow-down-bold"></i>@else <i class="mdi mdi-arrow-up-bold"></i>@endif{{ number_format($sales_increase, 2) }}% higher than yesterday
                             </h6>
@@ -33,7 +33,7 @@
                     <h4 class="card-title">PROFIT/LOSS SUMMARY</h4>
                     <div class="d-flex flex-row">
                         <div class="align-self-center">
-                            <span class="display-6 text-white"><span class="naira">N</span>{{ number_format($today_profit, 2) }}</span>
+                            <span class="display-6 text-white"><span>€</span>{{ number_format($today_profit, 2) }}</span>
                             <h6 style="color: rgba(255,255,255,.6) !important; font-size:11px;">
                                 @if(floatval($profit_increase) < 0)<i class="mdi mdi-arrow-down-bold"></i>@else <i class="mdi mdi-arrow-up-bold"></i>@endif{{ number_format($profit_increase, 2) }}% higher than yesterday
                             </h6>
@@ -53,7 +53,7 @@
                     <h4 class="card-title">INVENTORY SUMMARY</h4>
                     <div class="d-flex flex-row">
                         <div class="align-self-center">
-                            <span class="display-6 text-white"><span style="text-decoration: line-through">N</span>{{ number_format($inventory_summary, 2) }}</span>
+                            <span class="display-6 text-white"><span>€</span>{{ number_format($inventory_summary, 2) }}</span>
                             <h6 style="color: rgba(255,255,255,.6) !important; font-size:11px;">For {{ $total_items }} items in stock</h6>
                             <h5 class="text-white">Total Value of Inventory Stock</h5>
                         </div>
