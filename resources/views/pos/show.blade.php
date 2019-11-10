@@ -136,10 +136,10 @@
                 </div>
 
                 <div class="col-md-3">
-                    <button class="btn btn-success pull-right sell-button d-none">
+                    <button class="btn btn-success pull-right sell-button">
                         Sell (CASH Change)<i class="mdi mdi-arrow-right-bold pl-2"></i>
                     </button>
-                    <button class="btn btn-success pull-right sell-button-ln d-none">
+                    <button class="btn btn-success pull-right sell-button-ln">
                         Sell (LN Change)<i class="mdi mdi-arrow-right-bold pl-2"></i>
                     </button>
                 </div>
