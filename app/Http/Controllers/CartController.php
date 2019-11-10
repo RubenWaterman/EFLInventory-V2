@@ -494,6 +494,8 @@ class CartController extends Controller {
         $printer -> text($tendered);
         $printer -> text($change);
 
+        $printer -> text("THANK YOU FOR BUYING FROM US\n");
+        $printer -> text("Returns are only accepted within 24 working hours from the time of purchase, on show of this receipt, and given the item is in an acceptable good condition.\n");
         $printer -> feed(2);
         /* Cut the receipt and open the cash drawer */
         $printer -> cut();
