@@ -310,14 +310,13 @@ class CartController extends Controller {
         $printer -> text($subtotal);
         $printer -> setEmphasis(false);
         $printer -> feed();
+        $printer -> text($total);
+        $printer -> selectPrintMode();
 
-        /* Tax and total */
+        /* Change part */
         $printer -> text($tendered);
         $printer -> text($change);
         $printer -> text($satoshis);
-        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-        $printer -> text($total);
-        $printer -> selectPrintMode();
         
         /* Footer */
         $printer -> feed(2);
