@@ -422,6 +422,7 @@ class item
         if ($this -> dollarSign) {
             $leftCols = $leftCols / 2 - $rightCols / 2;
         }
+        $sign = ($this -> dollarSign ? 'EUR ' : '');
 
         if ($this -> name == 'Total') {
             $left = str_pad($this -> name, $leftCols);
@@ -432,7 +433,6 @@ class item
             $left = str_pad($this -> name, $leftCols);
         }
 
-        $sign = ($this -> dollarSign ? 'EUR ' : '');
         $right = str_pad($sign . $this -> price, $rightCols, ' ', STR_PAD_LEFT);
         return "$left$right\n";
     }
