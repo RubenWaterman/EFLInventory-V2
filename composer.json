@@ -12,7 +12,7 @@
         "intervention/image": "^2.4",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "mike42/escpos-php": "^1.6",
+        "mike42/escpos-php": "^3.0",
         "nao-pon/flysystem-google-drive": "~1.1",
         "phpoffice/phpspreadsheet": "^1.0",
         "rah/danpu": "2.6.*"
