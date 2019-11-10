@@ -294,6 +294,7 @@ class CartController extends Controller {
         /* Title of receipt */
         $printer -> setEmphasis(true);
         $printer -> text("SALES INVOICE {$sales_group['receipt_no']}\n");
+        $printer -> text("Your cashier: {$sales_group['seller']}\n");
         $printer -> setEmphasis(false);
         $printer -> text($date);
         $printer -> feed();
@@ -471,6 +472,7 @@ class CartController extends Controller {
         /* Title of receipt */
         $printer -> setEmphasis(true);
         $printer -> text("SALES INVOICE {$sales_group['receipt_no']}\n");
+        $printer -> text("Your cashier: {$sales_group['seller']}\n");
         $printer -> setEmphasis(false);
         $printer -> text($date);
         $printer -> feed();
