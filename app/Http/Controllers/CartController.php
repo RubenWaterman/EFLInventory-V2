@@ -294,8 +294,9 @@ class CartController extends Controller {
         /* Title of receipt */
         $printer -> setEmphasis(true);
         $printer -> text("SALES INVOICE\n");
-        $printer -> text($date);
         $printer -> setEmphasis(false);
+        $printer -> text($date);
+        $printer -> feed();
 
         /* Items */
         $printer -> setJustification(Printer::JUSTIFY_LEFT);
@@ -322,8 +323,10 @@ class CartController extends Controller {
         $printer -> bitImage($img);
         $printer -> feed();
 
-        $printer -> text("This is a QR code that can be scanned with a compatible Bitcoin Lightning Wallet.\n");
-        $printer -> text("In order to receive your bitcoin, you need to scan this QR code with one of the following wallets:\n");
+        $printer -> text("This is a QR code that can be scanned\n");
+        $printer -> text("with a compatible Bitcoin Lightning Wallet.\n");
+        $printer -> text("In order to receive your bitcoin, you need to\n");
+        $printer -> text("scan this QR code with one of the following wallets:\n");
         $printer -> text("- Bitcoin Lightning Wallet (BLW)\n");
         $printer -> text("- Bluewallet\n");
         $printer -> text("- Wallet of Satoshi\n");
