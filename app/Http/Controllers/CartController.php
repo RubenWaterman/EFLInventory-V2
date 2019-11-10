@@ -441,17 +441,11 @@ class CartController extends Controller {
         /* Information for the receipt */
         $tendered = new item('Amount Paid', divideFloat($sales_group['amount_tendered'],100));
         $change = new item('Change', divideFloat($sales_group['change_amount'],100));
-        $satoshis = new item('Change (in satoshis)', $satoshi);
         $total = new item('Total', divideFloat($sales_group['total_amount'],100), true);
         /* Date is kept the same for testing */
         $date = date('l jS \of F Y h:i:s A');
         //$date = "Monday 6th of April 2015 02:56:25 PM";
-
-        require_once("phpqrcode/qrlib.php");
-
-        \QRcode::png($lnurl, "test.png", 'L', 5, 0);
-
-        $img = EscposImage::load("test.png");
+        
         $logo = EscposImage::load(__DIR__.'/../../../public/img/blocklogo.png', false);
 
         $connector = new FilePrintConnector("/dev/usb/lp0");
