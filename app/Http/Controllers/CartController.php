@@ -273,11 +273,21 @@ class CartController extends Controller {
         \QRcode::png($lnurl, "test.png", 'L', 5, 0);
 
         $img = EscposImage::load("test.png");
+        $logo = EscposImage::load("resources/rawbtlogo.png", false);
 
 
         $connector = new FilePrintConnector("/dev/usb/lp0");
+        $profile = CapabilityProfile::load("POS-5890");
 
-        $printer = new Printer($connector);
+        $printer = new Printer($connector, $profile);
+
+        /* Print top logo */
+        if ($profile->getSupportsGraphics()) {
+            $printer->graphics($logo);
+        }
+        if ($profile->getSupportsBitImageRaster() && !$profile->getSupportsGraphics()) {
+            $printer->bitImage($logo);
+        }
         
         /* Name of shop */
         $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
