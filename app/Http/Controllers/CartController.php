@@ -423,7 +423,7 @@ class item
             $leftCols = $leftCols / 2 - $rightCols / 2;
         }
 
-        if (($this -> name == 'Total') {
+        if ($this -> name == 'Total') {
             $left = str_pad($this -> name, $leftCols);
         } elseif ($this -> quantity > 0) {
             $left = str_pad($this -> quantity . ' x ' . $this -> name, $leftCols);
