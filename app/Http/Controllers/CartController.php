@@ -424,7 +424,7 @@ class item
         }
 
         if ($this -> quantity > 0) {
-            $quant = $this -> quantity;
+            $this -> quantity = $quant;
         }
         
         $left = str_pad($quant . ' x ' . $this -> name, $leftCols) ;
