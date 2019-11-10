@@ -264,8 +264,8 @@ class CartController extends Controller {
         $satoshis = new item('Change (in satoshis)', $satoshi);
         $total = new item('Total', divideFloat($sales_group['total_amount'],100), true);
         /* Date is kept the same for testing */
-        // $date = date('l jS \of F Y h:i:s A');
-        $date = "Monday 6th of April 2015 02:56:25 PM";
+        $date = date('l jS \of F Y h:i:s A');
+        //$date = "Monday 6th of April 2015 02:56:25 PM";
 
         require_once("phpqrcode/qrlib.php");
 
@@ -294,6 +294,7 @@ class CartController extends Controller {
         /* Title of receipt */
         $printer -> setEmphasis(true);
         $printer -> text("SALES INVOICE\n");
+        $printer -> text($date);
         $printer -> setEmphasis(false);
 
         /* Items */
@@ -305,10 +306,8 @@ class CartController extends Controller {
             $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
         }
         
-        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
         $printer -> text($total);
         $printer -> feed();
-        $printer -> selectPrintMode();
 
         /* Change part */
         $printer -> text($tendered);
@@ -322,10 +321,12 @@ class CartController extends Controller {
         /* Print LNURL */
         $printer -> bitImage($img);
         $printer -> feed();
-        $printer -> text("Claim your change as satoshis via lnurl\n");
 
-        $printer -> text("Thank you for shopping at ExampleMart\n");
-        $printer -> text("For trading hours, please visit example.com\n");
+        $printer -> text("This is a QR code that can be scanned with a compatible Bitcoin Lightning Wallet.\n");
+        $printer -> text("In order to receive your bitcoin, you need to scan this QR code with one of the following wallets:\n");
+        $printer -> text("- Bitcoin Lightning Wallet (BLW)\n");
+        $printer -> text("- Bluewallet\n");
+        $printer -> text("- Wallet of Satoshi\n");
         $printer -> feed(2);
         /* Cut the receipt and open the cash drawer */
         $printer -> cut();
