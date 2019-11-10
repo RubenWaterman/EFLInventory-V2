@@ -173,6 +173,87 @@ $(document).ready(function () {
         });
     });
 
+    $(".sell-button-ln").click(function () {
+        // Ensure cash tendered is not empty
+        var tendered = $(".cash-tendered").val();
+        if (parseInt(tendered, 10) == 0) {
+            $.toast({
+                heading: 'Invalid Amount',
+                text: "Amount tendered cannot be zero",
+                position: 'top-right',
+                loaderBg: '#ff6849',
+                icon: 'error',
+                hideAfter: 7000,
+                stack: 6
+            });
+            return;
+        }
+
+        // Get change and balance remaining
+        var change = $(".cash-change").val();
+        var remaining = $(".cash-remaining-amount").val();
+        var payment_method = $(".payment-btn.selected").data("mode");
+        var remarks = $("#txtRemarks").val();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var jqxhr = $.ajax({
+            url: "/pos/cart/sellln",
+            type: "POST",
+            data: {
+                "tendered": tendered, "payment_method": payment_method,
+                "change": change, "balance_remaining": remaining, "remarks": remarks
+            }
+        });
+
+        jqxhr.done(function (response, textStatus, jqXHR) {
+            // Clear cart from session using ajax
+            $.ajax({
+                url: "/pos/cart/delete/all",
+                type: "get",
+                success: function(data, textStatus, jqXHR) {
+                    // Display cart empty
+                    $(".order-empty").removeClass("d-none");
+                }
+            });
+
+            // Show sales receipt page
+            $("#trans-no").text(response.sales_group.receipt_no);
+
+            // Append items to table
+            var items = response.items;
+            var count = 1;
+            $.each(items, function (k, v) {
+                var row = "<tr>";
+                row += "<td class=\"text-center\">" + count + "</td>";
+                row += "<td>" + v.name + "</td>";
+                row += "<td class=\"text-right\">" + v.quantity + "</td>";
+                row += "<td class=\"text-right\">" + currencyFormat.format(v.price) + "</td>";
+                row += "<td class=\"text-right\">" + currencyFormat.format(v.price * v.quantity) + "</td>";
+
+                $("#receipt-table").append(row);
+                count++;
+            });
+
+            // Total value
+            $("#sell-total").text(currencyFormat.format(response.sales_group.total_amount));
+            $("#amount-paid").text(currencyFormat.format(response.sales_group.amount_tendered));
+            $("#paid-balance").text(currencyFormat.format(response.sales_group.balance_due));
+            $("#paid-change").text(currencyFormat.format(response.sales_group.change_amount));
+
+            // Organisation Address
+            $("#org-address").text(response.settings.org_address);
+            $("#org-contact").text(response.settings.org_contact);
+
+            closeDrawer();
+            showReceipt();
+        });
+    });
+
     // Print receipt
     $("#print").click(function() {
         var mode = 'popup' //'iframe'; //popup
