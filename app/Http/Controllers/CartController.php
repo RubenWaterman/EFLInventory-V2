@@ -259,7 +259,6 @@ class CartController extends Controller {
         $satoshi  = $response['satoshis'];
 
         /* Information for the receipt */
-        $subtotal = new item('Subtotal', divideFloat($sales_group['total_amount'],100));
         $tendered = new item('Amount Paid', divideFloat($sales_group['amount_tendered'],100));
         $change = new item('Change', divideFloat($sales_group['change_amount'],100));
         $satoshis = new item('Change (in satoshis)', $satoshi);
@@ -305,12 +304,10 @@ class CartController extends Controller {
         foreach ($items as $item) {
             $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
         }
-                
-        $printer -> setEmphasis(true);
-        $printer -> text($subtotal);
-        $printer -> setEmphasis(false);
-        $printer -> feed();
+        
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
         $printer -> text($total);
+        $printer -> feed();
         $printer -> selectPrintMode();
 
         /* Change part */
