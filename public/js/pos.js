@@ -89,6 +89,10 @@ $(document).ready(function () {
         if (parseInt($(".cash-remaining-amount").val(), 10) != 0) {
             $(".sell-button").removeClass("d-none");
         }
+
+        if (parseInt($(".cash-remaining-amount").val(), 10) != 0) {
+            $(".sell-button-ln").removeClass("d-none");
+        }
     });
 
     // Reduce product stock according to sold quantity
