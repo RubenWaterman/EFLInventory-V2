@@ -273,7 +273,7 @@ class CartController extends Controller {
         \QRcode::png($lnurl, "test.png", 'L', 5, 0);
 
         $img = EscposImage::load("test.png");
-        $logo = EscposImage::load({{ asset('/img/blocklogo.png') }}, false);
+        $logo = EscposImage::load(__DIR__.'/../../../public/img/blocklogo.png', false);
 
 
         $connector = new FilePrintConnector("/dev/usb/lp0");
