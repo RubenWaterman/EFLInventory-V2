@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+require __DIR__.'/../../../vendor/autoload.php';
+require_once("phpqrcode/qrlib.php");
+
 use App\Batch;
 use App\POSProduct;
 use App\ProductVariation;
@@ -10,6 +13,9 @@ use App\SalesHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Response;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 class CartController extends Controller {
 
@@ -236,6 +242,94 @@ class CartController extends Controller {
 
         $app_settings = \DB::table("app_config")->get()->first();
 
+        function divideFloat($a, $b, $precision=2) {
+            $a*=pow(10, $precision);
+            $result=(int)($a / $b);
+            if (strlen($result)==$precision) return '0.' . $result;
+            else return preg_replace('/(\d{' . $precision . '})$/', '.\1', $result);
+        }
+
+        $data_array =  array(
+                "euro" => divideFloat($sales_group['change_amount'],100)
+        );
+        
+        $make_call = callAPI('POST', 'http://localhost:5000/lnurl', json_encode($data_array));
+        $response = json_decode($make_call, true);
+        $lnurl    = $response['lnurl'];
+        $satoshi  = $response['satoshis'];
+
+        /* Information for the receipt */
+        $subtotal = new item('Subtotal', divideFloat($sales_group['total_amount'],100));
+        $tendered = new item('Amount Paid', divideFloat($sales_group['amount_tendered'],100));
+        $change = new item('Change', divideFloat($sales_group['change_amount'],100));
+        $satoshis = new item('Change (in satoshis)', $satoshi);
+        $total = new item('Total', divideFloat($sales_group['total_amount'],100), true);
+        /* Date is kept the same for testing */
+        // $date = date('l jS \of F Y h:i:s A');
+        $date = "Monday 6th of April 2015 02:56:25 PM";
+
+        require_once("phpqrcode/qrlib.php");
+
+        \QRcode::png($lnurl, "test.png", 'L', 5, 0);
+
+        $img = EscposImage::load("test.png");
+
+
+        $connector = new FilePrintConnector("/dev/usb/lp0");
+
+        $printer = new Printer($connector);
+        
+        /* Name of shop */
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer -> text("The Block Lisboa\n");
+        $printer -> selectPrintMode();
+        $printer -> text("R. Latino Coelho 63 1er Andar, 1050-133 Lisboa\n");
+        $printer -> feed();
+
+        /* Title of receipt */
+        $printer -> setEmphasis(true);
+        $printer -> text("SALES INVOICE\n");
+        $printer -> setEmphasis(false);
+
+        /* Items */
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
+        $printer -> setEmphasis(true);
+        $printer -> text(new item('', 'EUR'));
+        $printer -> setEmphasis(false);
+        foreach ($items as $item) {
+            $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
+        }
+                
+        $printer -> setEmphasis(true);
+        $printer -> text($subtotal);
+        $printer -> setEmphasis(false);
+        $printer -> feed();
+
+        /* Tax and total */
+        $printer -> text($tendered);
+        $printer -> text($change);
+        $printer -> text($satoshis);
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer -> text($total);
+        $printer -> selectPrintMode();
+        
+        /* Footer */
+        $printer -> feed(2);
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
+
+        /* Print LNURL */
+        $printer -> bitImage($img);
+        $printer -> feed();
+        $printer -> text("Claim your change as satoshis via lnurl\n");
+
+        $printer -> text("Thank you for shopping at ExampleMart\n");
+        $printer -> text("For trading hours, please visit example.com\n");
+        $printer -> feed(2);
+        /* Cut the receipt and open the cash drawer */
+        $printer -> cut();
+
+        $printer -> close();
+
         // return receipt number and app settings
         return Response::json([
             "sales_group" => $sales_group,
@@ -300,8 +394,67 @@ class CartController extends Controller {
     }
 }
 
+class item
+{
+    private $quantity;
+    private $name;
+    private $price;
+    private $dollarSign;
 
+    public function __construct($name = '', $price = '', $quantity = 0, $dollarSign = false)
+    {
+        $this -> quantity = $quantity;
+        $this -> name = $name;
+        $this -> price = $price;
+        $this -> dollarSign = $dollarSign;
+    }
 
+    public function __toString()
+    {
+        $rightCols = 10;
+        $leftCols = 38;
+        if ($this -> dollarSign) {
+            $leftCols = $leftCols / 2 - $rightCols / 2;
+        }
+        $left = str_pad($this -> quantity . ' x ' . $this -> name, $leftCols) ;
 
+        $sign = ($this -> dollarSign ? 'EUR ' : '');
+        $right = str_pad($sign . $this -> price, $rightCols, ' ', STR_PAD_LEFT);
+        return "$left$right\n";
+    }
+}
 
-
+function callAPI($method, $url, $data){
+    $curl = curl_init();
+ 
+    switch ($method){
+       case "POST":
+          curl_setopt($curl, CURLOPT_POST, 1);
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+          break;
+       case "PUT":
+          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+          if ($data)
+             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+          break;
+       default:
+          if ($data)
+             $url = sprintf("%s?%s", $url, http_build_query($data));
+    }
+ 
+    // OPTIONS:
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+       'APIKEY: 111111111111111111111',
+       'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+ 
+    // EXECUTE:
+    $result = curl_exec($curl);
+    if(!$result){die("Connection Failure");}
+    curl_close($curl);
+    return $result;
+ }
