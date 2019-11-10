@@ -425,7 +425,7 @@ class item
 
         if ($this -> quantity > 0) {
             $left = str_pad($this -> quantity . ' x ' . $this -> name, $leftCols);
-        } elseif ($this -> name = "Total"){
+        } elseif ($this -> name == "Total"){
             $left = str_pad($this -> name, $leftCols);
         } else {
             $left = str_pad($this -> name, $leftCols);
