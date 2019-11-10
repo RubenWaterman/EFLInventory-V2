@@ -304,7 +304,8 @@ class CartController extends Controller {
         $printer -> text(new item('', 'EUR'));
         $printer -> setEmphasis(false);
         foreach ($items as $item) {
-            $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
+            $totalprice = divideFloat($item['price'],100) * $item['quantity'];
+            $printer -> text(new item($item['name'],$totalprice,$item['quantity']));
         }
         
         $printer -> text($total);
