@@ -157,7 +157,7 @@ class CartController extends Controller {
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sell(Request $request) {
+    public function sellLN(Request $request) {
         $tendered_amount = $request["tendered"];
         $change = $request["change"];
         $remaining_balance = $request["balance_remaining"];
@@ -335,6 +335,169 @@ class CartController extends Controller {
         $printer -> feed(2);
         /* Cut the receipt and open the cash drawer */
         $printer -> cut();
+
+        $printer -> close();
+
+        // return receipt number and app settings
+        return Response::json([
+            "sales_group" => $sales_group,
+            "items" => $items,
+            "settings" => $app_settings
+        ]);
+    }
+
+    public function sell(Request $request) {
+        $tendered_amount = $request["tendered"];
+        $change = $request["change"];
+        $remaining_balance = $request["balance_remaining"];
+        $payment_method = title_case($request["payment_method"]);
+        $remarks = $request["remarks"];
+
+        $sales_group = null;
+
+        // All items in cart
+        $items = \Cart::getContent();
+
+        // Get a comma-separated string of names of all products in cart
+        $product_names = "";
+        foreach ($items as $item) {
+            $product_names .= "{$item->name}, ";
+        }
+
+        $last_receipt_no = 10285142;
+        $_last_sale = SalesGroup::all()->sortByDesc("id");
+        if(count($_last_sale) > 0) {
+            $last_receipt_no = $_last_sale->first()->receipt_no;
+        }
+
+        // Create a new sales group
+        $sales_group = SalesGroup::create([
+            "products" => rtrim($product_names, ", "),
+            "total_amount" => \Cart::getSubTotal(),
+            "amount_tendered" => $tendered_amount,
+            "change_amount" => $change,
+            "balance_due" => $remaining_balance,
+            "payment_method" => $payment_method,
+            "remarks" => ($remarks == "") ? Carbon::now() : $remarks,
+            "seller" => \Auth::user()->name,
+            "receipt_no" => (int)$last_receipt_no + 1
+        ]);
+
+        // Loop through each cart item
+        // retrieve product and batch details
+        // persist a new SalesHistory to DB
+        // update each batch current_quantity value
+        // update product stock value
+        foreach ($items as $item) {
+            //get active product batch
+            $batch_id = $item->id;
+            $active_batch = Batch::find($batch_id);
+
+            // Get product variation
+            $product_variation = ProductVariation::find($active_batch->variation_id);
+
+            // reduce batch's current quantity by the sold quantity
+            $active_batch->current_quantity -= $item->quantity;
+            $active_batch->save();
+
+            // update product variation stock value
+            $product_variation->stock -= $item->quantity;
+            $product_variation->save();
+
+            // Initialize helper variables
+            $sale_price = ($item->price / $item->quantity);
+            $loss = 0;
+            $profit = 0;
+
+            // Calculate profit & loss
+            if(($sale_price - $active_batch->unit_cost) > 0) {
+                $profit = $sale_price - $active_batch->unit_cost;
+            } elseif(($sale_price - $active_batch->unit_cost) < 0) {
+                $loss = -1 * ($sale_price - $active_batch->unit_cost);
+            }
+
+            // Create new selling history
+            $sales_history = SalesHistory::create([
+                "sales_group" => $sales_group->id,
+                "variation_id" => $product_variation->id,
+                "batch_id" => $active_batch->id,
+                "quantity" => $item->quantity,
+                "total_cost" => doubleval($item->price),
+                "unit_cost" => doubleval($sale_price),
+                "profit" => doubleval($profit),
+                "loss" => doubleval($loss)
+            ]);
+        }
+
+        $app_settings = \DB::table("app_config")->get()->first();
+
+        function divideFloat($a, $b, $precision=2) {
+            $a*=pow(10, $precision);
+            $result=(int)($a / $b);
+            if (strlen($result)==$precision) return '0.' . $result;
+            else return preg_replace('/(\d{' . $precision . '})$/', '.\1', $result);
+        }
+
+        /* Information for the receipt */
+        $tendered = new item('Amount Paid', divideFloat($sales_group['amount_tendered'],100));
+        $change = new item('Change', divideFloat($sales_group['change_amount'],100));
+        $satoshis = new item('Change (in satoshis)', $satoshi);
+        $total = new item('Total', divideFloat($sales_group['total_amount'],100), true);
+        /* Date is kept the same for testing */
+        $date = date('l jS \of F Y h:i:s A');
+        //$date = "Monday 6th of April 2015 02:56:25 PM";
+
+        require_once("phpqrcode/qrlib.php");
+
+        \QRcode::png($lnurl, "test.png", 'L', 5, 0);
+
+        $img = EscposImage::load("test.png");
+        $logo = EscposImage::load(__DIR__.'/../../../public/img/blocklogo.png', false);
+
+        $connector = new FilePrintConnector("/dev/usb/lp0");
+
+        $printer = new Printer($connector);
+
+        /* Print logo */
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
+        $printer -> bitImage($logo);
+        $printer -> feed();
+
+        /* Name of shop */
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
+        $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer -> text("The Block Lisboa\n");
+        $printer -> selectPrintMode();
+        $printer -> text("R. Latino Coelho 63 1er Andar, 1050-133 Lisboa\n");
+        $printer -> feed();
+
+        /* Title of receipt */
+        $printer -> setEmphasis(true);
+        $printer -> text("SALES INVOICE {$sales_group['receipt_no']}\n");
+        $printer -> setEmphasis(false);
+        $printer -> text($date);
+        $printer -> feed();
+
+        /* Items */
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
+        $printer -> setEmphasis(true);
+        $printer -> text(new item('', 'EUR'));
+        $printer -> setEmphasis(false);
+        foreach ($items as $item) {
+            $printer -> text(new item($item['name'],divideFloat($item['price'],100),$item['quantity']));
+        }
+        
+        $printer -> text($total);
+        $printer -> feed();
+
+        /* Change part */
+        $printer -> text($tendered);
+        $printer -> text($change);
+
+        $printer -> feed(2);
+        /* Cut the receipt and open the cash drawer */
+        $printer -> cut();
+        $printer -> pulse();
 
         $printer -> close();
 
