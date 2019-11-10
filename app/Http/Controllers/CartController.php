@@ -278,10 +278,14 @@ class CartController extends Controller {
         $connector = new FilePrintConnector("/dev/usb/lp0");
 
         $printer = new Printer($connector);
-        
+
+        /* Print logo */
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
         $printer -> bitImage($logo);
+        $printer -> feed();
 
         /* Name of shop */
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
         $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
         $printer -> text("The Block Lisboa\n");
         $printer -> selectPrintMode();
