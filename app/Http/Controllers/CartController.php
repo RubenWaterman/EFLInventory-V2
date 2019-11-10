@@ -325,8 +325,10 @@ class CartController extends Controller {
 
         $printer -> text("This is a QR code that can be scanned\n");
         $printer -> text("with a compatible Bitcoin Lightning Wallet.\n");
-        $printer -> text("In order to receive your bitcoin, you need to\n");
-        $printer -> text("scan this QR code with one of the following wallets:\n");
+        $printer -> feed();
+        $printer -> text("To receive your bitcoin, you need to scan\n");
+        $printer -> text("this QR code with one of the following wallets:\n");
+        $printer -> feed();
         $printer -> text("- Bitcoin Lightning Wallet (BLW)\n");
         $printer -> text("- Bluewallet\n");
         $printer -> text("- Wallet of Satoshi\n");
